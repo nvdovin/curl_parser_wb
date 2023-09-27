@@ -163,29 +163,42 @@ class WBParser:
         return "".join(list(str_price)[:-2])
 
 
-def main():
-    response = input("Ваш запрос: ")
-    wb = WBParser(response=response)
-    wb.parse_ready_json()
-
-
-def main_cycle():
+def main_cycle(id=0):
     chose = input('''Выбери тип действия
 new - новый запрос.
 refr - обновить старый
 sw - показать таблицу
-q - выход ''')
+q - выход 
+Запрос: ''')
+
     match chose:
         case "new":
-            pass
-        
+            response = input("Ваш запрос: ")
+            wb = WBParser(response=response)
+            wb.parse_ready_json()
+
         case "refr":
-            pass
-        
+            try:
+                with open(f"request_data/User_{id}.json", "r", encoding="utf-8") as json_data:
+                    dict_of_requests = {}
+                    requests_dict = json.load(json_data)
+                    i = 0
+                    print('Выберите, какую запрос обновить: ')
+                    for k, v in requests_dict.items():
+                        print(f"[{i}]  {v}")
+                        dict_of_requests[str(i)] =  str(k)
+                        i += 1
+                    chose_requsets = input("Выберите запись: ")
+                    
+                    refr_wb = WBParser(dict_of_requests[chose_requsets])
+
+            except Exception as error:
+                print(error)
+
         case "sw":
             pass
-        
+
         case "q":
             pass
-        
-    main()
+
+main_cycle()
